@@ -1,0 +1,6 @@
+FROM mongo-express
+
+RUN apk add bash
+RUN wget -O wait.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
+RUN chmod +x wait.sh
+# CMD ./wait.sh mongo:27017 -- node app

@@ -1,0 +1,47 @@
+version: "3"
+services:
+    mongo:
+        container_name: mongo
+        image: mongo
+        ports:
+            - "27017:27017"
+        volumes:
+            - ./data:/data/db:Z
+        logging:
+            driver: none
+        healthcheck:
+            test: nc -z 27017
+
+    mongo-express:
+        container_name: mongo-express
+        build:
+            context: .
+            dockerfile: Dockerfile-ME
+        depends_on:
+            - mongo
+        ports:
+            - "1234:1234"
+            - "8081:8081"
+        logging:
+            driver: none
+        entrypoint: ./wait.sh mongo:27017 -- node app
+
+    app-debug:
+        tty: true
+        stdin_open: true
+        container_name: app-debug
+        build:
+            context: ./
+        volumes:
+            - ./:/usr/app
+            - /usr/app/node_modules
+        depends_on:
+            - mongo
+        ports:
+            - "5000:5000"
+            - "9229:9229"
+            - "5858:5858"
+        restart: on-failure
+        environment:
+            - DB=mongodb://mongo/HelloWorld
+        entrypoint: wait-for-it mongo:27017 -- yarn dev:debug
