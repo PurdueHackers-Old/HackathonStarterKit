@@ -60,7 +60,7 @@ describe('Suite: Authentication Flows -- E2E', () => {
 		await page.goto(`http://localhost:${CONFIG.PORT}`);
 		const [login] = await page.$x(`//a[@href="/login"]`);
 		await login.click();
-		// await page.waitForNavigation();
+		await page.waitForNavigation();
 		await page.type('input[name=email]', user.user.email);
 		await page.type('input[name=password]', fakeUser.password);
 		await page.click('input[value="Submit"]');
