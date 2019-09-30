@@ -8,13 +8,19 @@ import { ResetPasswordForm } from './ResetPasswordForm';
 import { resetPassword } from '../../api';
 
 interface Props extends WithRouterProps {
-	token: string;
 	flashError: (msg: string, ctx?: IContext) => void;
 	flashSuccess: (msg: string, ctx?: IContext) => void;
 	clear: (ctx?: IContext) => void;
 }
 
-const ResetPassword = ({ token, flashError, flashSuccess, clear }: Props) => {
+const ResetPassword = ({
+	router: {
+		query: { token }
+	},
+	flashError,
+	flashSuccess,
+	clear
+}: Props) => {
 	const [state, setState] = useState({ password: '', passwordConfirm: '' });
 
 	const onChange = (e: ChangeEvent<HTMLInputElement>) =>
@@ -25,7 +31,11 @@ const ResetPassword = ({ token, flashError, flashSuccess, clear }: Props) => {
 		try {
 			clear();
 			flashSuccess('Resetting password...');
-			const response = await resetPassword(state.password, state.passwordConfirm, token);
+			const response = await resetPassword(
+				state.password,
+				state.passwordConfirm,
+				token as string
+			);
 			Router.push('/login');
 			clear();
 			flashSuccess(response);
